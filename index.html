@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suhaeb Smart Print — Self-Service Print &amp; Xerox Portal</title>
+  <title>Suhaeb Smart Print — Self-Service Print &amp; Counter Queue</title>
 
   <!-- Google Font: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +30,7 @@
   <!-- QRCode.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-  <!-- PDF.js for Automatic Page Counting & Rendering -->
+  <!-- PDF.js for Automatic Page Counting & Canvas Preview -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <style>
@@ -60,7 +60,7 @@
       border-radius: 0.5rem;
     }
 
-    /* Print isolation for Counter QR Standee & Batch Document Printing */
+    /* Dedicated Print Isolation for Counter QR Standee & Batch Document Printing */
     @media print {
       body * {
         visibility: hidden !important;
@@ -101,7 +101,7 @@
   <!-- ==================== TOP NAVIGATION BAR ==================== -->
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-      <!-- Shop Brand & Real Cloud Sync Status -->
+      <!-- Shop Brand & Cloud Sync Badge -->
       <div class="flex items-center gap-3 min-w-0">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white flex items-center justify-center shadow-md shadow-indigo-600/20 shrink-0">
           <i data-lucide="printer" class="w-5 h-5"></i>
@@ -138,7 +138,7 @@
   </header>
 
   <!-- ==================== MAIN CONTENT ==================== -->
-  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
 
     <!-- ================================================================== -->
     <!--                       CUSTOMER PORTAL VIEW                         -->
@@ -168,7 +168,7 @@
         </p>
       </div>
 
-      <!-- ==================== STEP 1 & 2: ORDER FORM ==================== -->
+      <!-- ==================== STEP 1, 2 & 3: ORDER FORM ==================== -->
       <div id="customer-order-panel" class="space-y-5">
 
         <!-- STEP 1: MANDATORY CUSTOMER NAME -->
@@ -205,7 +205,7 @@
             class="relative group border-2 border-dashed border-slate-300 hover:border-indigo-500 hover:bg-indigo-50/40 rounded-2xl p-6 text-center transition-all cursor-pointer">
             <input id="file-input" type="file" multiple accept=".pdf,image/jpeg,image/png,image/jpg" class="hidden" />
             <div class="flex flex-col items-center">
-              <div class="w-13 h-13 w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                 <i data-lucide="folder-plus" class="w-6 h-6"></i>
               </div>
               <p class="text-sm sm:text-base font-bold text-slate-800">Tap to select multiple files (up to 100)</p>
@@ -231,9 +231,7 @@
             </div>
 
             <!-- Scrollable File Items -->
-            <div id="batch-files-list" class="max-h-64 overflow-y-auto space-y-2 pr-1">
-              <!-- Injected dynamically -->
-            </div>
+            <div id="batch-files-list" class="max-h-64 overflow-y-auto space-y-2 pr-1"></div>
 
             <!-- Combined Batch Pages Summary -->
             <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
@@ -336,16 +334,16 @@
         <h3 id="tracker-title" class="text-xl sm:text-2xl font-extrabold text-slate-900">Waiting in Queue</h3>
         <p id="tracker-subtitle" class="text-sm text-slate-500 mt-1 mb-5">Your batch order has been sent to the shop counter.</p>
 
-        <!-- Prominent Live Waiting Queue Card (Shown whenever someone is printing or ahead) -->
+        <!-- Live Waiting Queue Card (Shown whenever someone ahead is printing or waiting) -->
         <div id="waiting-queue-card" class="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 text-left">
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 animate-pulse">
               <i data-lucide="hourglass" class="w-5 h-5"></i>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-extrabold text-amber-950">Someone is currently printing — Please wait</p>
-              <p id="waiting-position-text" class="text-xs font-bold text-amber-800 mt-1">Queue Position: #2</p>
-              <p id="waiting-ahead-text" class="text-xs text-amber-700 mt-0.5">1 order ahead of you</p>
+              <p class="text-sm font-extrabold text-amber-950">Someone ahead is printing — Please wait</p>
+              <p id="waiting-position-text" class="text-xs font-bold text-amber-800 mt-1">Position #2 in queue</p>
+              <p id="waiting-ahead-text" class="text-xs text-amber-700 mt-0.5">1 customer order ahead of you</p>
             </div>
           </div>
         </div>
@@ -357,7 +355,7 @@
               <i data-lucide="check" class="w-4 h-4"></i>
             </div>
             <div>
-              <p class="text-sm font-bold text-slate-900">1. Batch Uploaded</p>
+              <p class="text-sm font-bold text-slate-900">1. Uploaded</p>
               <p id="step-1-sub" class="text-xs text-slate-500">All files grouped into 1 order</p>
             </div>
           </div>
@@ -367,8 +365,8 @@
               <i data-lucide="clock" class="w-4 h-4"></i>
             </div>
             <div>
-              <p class="text-sm font-bold text-slate-900">2. Waiting at Counter</p>
-              <p id="step-2-sub" class="text-xs text-slate-500">Queue Position #1</p>
+              <p class="text-sm font-bold text-slate-900">2. Waiting</p>
+              <p id="step-2-sub" class="text-xs text-slate-500">Position #1 in queue</p>
             </div>
           </div>
 
@@ -377,8 +375,8 @@
               <i data-lucide="printer" class="w-4 h-4"></i>
             </div>
             <div>
-              <p class="text-sm font-bold text-slate-900">3. Printing Now</p>
-              <p id="step-3-sub" class="text-xs text-slate-500">Counter is printing your pages</p>
+              <p class="text-sm font-bold text-slate-900">3. Printed</p>
+              <p id="step-3-sub" class="text-xs text-slate-500">Unlocks once counter prints your pages</p>
             </div>
           </div>
 
@@ -387,8 +385,8 @@
               <i data-lucide="wallet" class="w-4 h-4"></i>
             </div>
             <div>
-              <p class="text-sm font-bold text-slate-900">4. Printed — Pay UPI or Cash</p>
-              <p class="text-xs text-slate-500">Unlocks once counter confirms print</p>
+              <p class="text-sm font-bold text-slate-900">4. Paid</p>
+              <p class="text-xs text-slate-500">Complete UPI QR or Cash payment</p>
             </div>
           </div>
         </div>
@@ -490,13 +488,13 @@
             </button>
           </div>
 
-          <!-- AWAITING OWNER APPROVAL BANNER (FOR CASH OR UPI CLAIM) -->
+          <!-- AWAITING OWNER APPROVAL BANNER -->
           <div id="pay-state-awaiting" class="hidden mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950">
             <div class="flex items-center justify-center gap-2 font-bold text-sm mb-1">
               <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-amber-600"></i>
               <span id="awaiting-title">Waiting for Owner to Confirm Cash...</span>
             </div>
-            <p class="text-xs text-amber-800">The admin screen has received your payment prompt ("Payment done? Yes / No").</p>
+            <p class="text-xs text-amber-800">The counter screen has received your payment prompt ("Payment done? Yes / No").</p>
           </div>
 
           <!-- OWNER REJECTED ("NO") BANNER -->
@@ -540,7 +538,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Admin Counter Dashboard</h2>
-          <p class="text-sm text-slate-500">Manage customer batches, 4 printer slots, Cash/UPI approvals, and unpaid records.</p>
+          <p class="text-sm text-slate-500">One-tap print &amp; payment counter controls for your shop.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button id="btn-open-printer-guide" type="button"
@@ -565,12 +563,39 @@
         </div>
       </div>
 
-      <!-- LIVE CASH / UPI APPROVAL REQUESTS ("PAYMENT DONE? YES / NO") -->
-      <div id="admin-approval-stack" class="hidden space-y-3">
-        <!-- Live approval request banners injected here -->
+      <!-- 1. LIVE CASH / UPI APPROVAL REQUESTS ("PAYMENT DONE? YES / NO") -->
+      <div id="admin-approval-stack" class="hidden space-y-3"></div>
+
+      <!-- 2. TOP PRIORITY: WAITING CUSTOMERS QUICK-ACTION BOARD (LARGE ONE-HANDED BUTTONS) -->
+      <div class="bg-white rounded-2xl border-2 border-indigo-200/90 shadow-md overflow-hidden">
+        <div class="px-5 py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+              <i data-lucide="zap" class="w-5 h-5"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-base sm:text-lg font-extrabold tracking-tight truncate">Waiting Customers (Ready to Print &amp; Collect)</h3>
+              <p class="text-xs text-indigo-100 truncate">Large one-tap counter buttons for phone operation</p>
+            </div>
+          </div>
+          <span id="waiting-board-count" class="px-3 py-1 rounded-full bg-white text-indigo-700 text-xs sm:text-sm font-extrabold shrink-0">
+            0 Waiting
+          </span>
+        </div>
+
+        <!-- Calm All-Caught-Up Bar (When empty) -->
+        <div id="waiting-board-empty" class="px-5 py-6 flex items-center justify-center gap-2.5 text-sm font-semibold text-emerald-700 bg-emerald-50/50">
+          <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0"></i>
+          <span>No customers waiting right now — all caught up!</span>
+        </div>
+
+        <!-- Quick-Action Customer Cards -->
+        <div id="waiting-board-list" class="hidden p-4 sm:p-5 space-y-4 bg-slate-50/60">
+          <!-- Injected dynamically with large py-3.5 text-base font-bold buttons -->
+        </div>
       </div>
 
-      <!-- KPI STATS BAR -->
+      <!-- 3. KPI STATS BAR -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-sm">
           <div class="flex items-center justify-between mb-2">
@@ -617,36 +642,7 @@
         </div>
       </div>
 
-      <!-- 4 PRINTER SLOTS PANEL (HONEST STATUS — NO GHOST ONLINE PRINTER) -->
-      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-              <i data-lucide="server" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="text-base font-bold text-slate-900">4 Printer Slots</h3>
-              <p class="text-xs text-slate-500">Starts Offline by default so there is never a false "Online" printer. Tap <strong>Mark Printed</strong> only after physical pages print.</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <span id="slots-status-summary" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-              0 / 4 Active
-            </span>
-            <label class="inline-flex items-center gap-2 cursor-pointer select-none pl-2 border-l border-slate-200">
-              <input id="toggle-sound-alert" type="checkbox" class="sr-only peer" checked />
-              <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-4"></div>
-              <span class="text-xs font-semibold text-slate-700">Sound</span>
-            </label>
-          </div>
-        </div>
-
-        <div id="printer-slots-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3.5">
-          <!-- 4 Printer Slot Cards injected dynamically -->
-        </div>
-      </div>
-
-      <!-- COLLAPSIBLE SHOP SETTINGS PANEL -->
+      <!-- 4. COLLAPSIBLE SHOP SETTINGS PANEL -->
       <div id="admin-settings-panel" class="hidden bg-white rounded-2xl border border-indigo-200 shadow-sm p-5 sm:p-6">
         <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
           <div class="flex items-center gap-2">
@@ -694,11 +690,38 @@
         </form>
       </div>
 
-      <!-- LIVE CUSTOMER ORDERS & UNPAID CUSTOMERS LIST -->
+      <!-- 5. 4 PRINTER SLOTS PANEL (HONEST STATUS — NO GHOST ONLINE PRINTER) -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+              <i data-lucide="server" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">4 Printer Slots (Manual Queue Slots)</h3>
+              <p class="text-xs text-slate-500">All slots default to Offline so there is never a false "Online" printer.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <span id="slots-status-summary" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              0 / 4 Active
+            </span>
+            <label class="inline-flex items-center gap-2 cursor-pointer select-none pl-2 border-l border-slate-200">
+              <input id="toggle-sound-alert" type="checkbox" class="sr-only peer" checked />
+              <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-4"></div>
+              <span class="text-xs font-semibold text-slate-700">Sound</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="printer-slots-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3.5"></div>
+      </div>
+
+      <!-- 6. COMPLETE CUSTOMER ORDER HISTORY & UNPAID CUSTOMERS LIST -->
       <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
         <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center gap-2.5">
-            <h3 class="text-base font-bold text-slate-900">Customer Print List</h3>
+            <h3 class="text-base font-bold text-slate-900">Customer Print History &amp; Unpaid List</h3>
             <span id="queue-count-badge" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">0</span>
           </div>
           <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
@@ -709,9 +732,7 @@
           </div>
         </div>
 
-        <div id="admin-queue-list" class="p-4 sm:p-5 space-y-3">
-          <!-- Customer order cards injected dynamically -->
-        </div>
+        <div id="admin-queue-list" class="p-4 sm:p-5 space-y-3"></div>
 
         <div id="admin-queue-empty" class="hidden py-14 px-6 text-center">
           <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
@@ -784,14 +805,12 @@
         </button>
       </div>
 
-      <div id="unpaid-modal-list" class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-rose-50/40">
-        <!-- Unpaid customer entries injected here -->
-      </div>
+      <div id="unpaid-modal-list" class="flex-1 overflow-y-auto p-4 space-y-3 bg-rose-50/40"></div>
 
       <div class="px-5 py-3.5 bg-white border-t border-slate-100 flex items-center justify-between gap-3">
         <span class="text-xs text-slate-500">Delete entries once customers pay later.</span>
         <button id="btn-dismiss-unpaid-modal" type="button"
-          class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
+          class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
           Close Alert
         </button>
       </div>
@@ -812,34 +831,30 @@
       </div>
 
       <!-- Batch File Selector Bar -->
-      <div id="preview-file-switcher" class="px-5 py-2.5 bg-slate-50 border-b border-slate-200/80 flex items-center gap-2 overflow-x-auto">
-        <!-- File tabs injected dynamically -->
-      </div>
+      <div id="preview-file-switcher" class="px-5 py-2.5 bg-slate-50 border-b border-slate-200/80 flex items-center gap-2 overflow-x-auto"></div>
 
-      <div id="preview-body" class="flex-1 overflow-auto p-5 bg-slate-100 flex flex-col items-center justify-start gap-4 min-h-[280px]">
-        <!-- Preview canvas / image rendered here -->
-      </div>
+      <div id="preview-body" class="flex-1 overflow-auto p-5 bg-slate-100 flex flex-col items-center justify-start gap-4 min-h-[280px]"></div>
 
       <div class="px-5 py-3.5 bg-white border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
         <button id="btn-preview-cancel" type="button"
-          class="px-3.5 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-50 transition">
+          class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-50 transition">
           Close
         </button>
         <div class="flex flex-wrap items-center gap-2">
           <button id="btn-print-current-file" type="button"
-            class="px-3.5 py-2 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+            class="px-3.5 py-2.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
             <i data-lucide="printer" class="w-4 h-4"></i>
             <span>Print This File</span>
           </button>
           <button id="btn-print-all-batch" type="button"
-            class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+            class="px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
             <i data-lucide="layers" class="w-4 h-4"></i>
             <span>Print All Files</span>
           </button>
           <button id="btn-preview-mark-printed" type="button"
-            class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+            class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
             <i data-lucide="check-circle" class="w-4 h-4"></i>
-            <span>Mark Printed</span>
+            <span>Mark as Printed</span>
           </button>
         </div>
       </div>
@@ -913,7 +928,7 @@
       </div>
       <div class="p-5 space-y-4 text-xs sm:text-sm text-slate-600">
         <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs">
-          <strong>Why slots start Offline:</strong> Browsers cannot detect physical Wi-Fi or USB printers automatically. That prevents false "Online" indicators and fake "Printed" statuses.
+          <strong>Manual Queue Mode:</strong> Orders remain in <em>Waiting</em> until you open the file, print it on your Epson L3250, and tap <strong>Mark as Printed</strong>.
         </div>
         <div class="space-y-3">
           <div class="flex gap-3">
@@ -926,15 +941,15 @@
           <div class="flex gap-3">
             <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
             <div>
-              <p class="font-bold text-slate-900">Open Customer Batch &amp; Print</p>
-              <p class="text-xs text-slate-500 mt-0.5">In the Admin Queue, tap <strong>Preview &amp; Print</strong> on a customer's batch, then tap <strong>Print This File</strong> or <strong>Print All Files</strong> to open Android's print dialog and pick your Epson L3250.</p>
+              <p class="font-bold text-slate-900">Tap "Preview / Open File" &amp; Print</p>
+              <p class="text-xs text-slate-500 mt-0.5">From the top <strong>Waiting Customers</strong> board, tap <strong>Preview / Open File</strong>, then tap <strong>Print This File</strong> or <strong>Print All Files</strong> to open Android's print dialog and pick your Epson L3250.</p>
             </div>
           </div>
           <div class="flex gap-3">
             <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
             <div>
-              <p class="font-bold text-slate-900">Tap "Mark Printed" After Physical Output</p>
-              <p class="text-xs text-slate-500 mt-0.5">Once the pages come out of the printer, tap <strong>Mark Printed</strong>. The customer's screen immediately unlocks the <strong>UPI QR</strong> and <strong>Cash</strong> payment options.</p>
+              <p class="font-bold text-slate-900">Tap "Mark as Printed"</p>
+              <p class="text-xs text-slate-500 mt-0.5">Once the pages come out of the printer, tap the large <strong>Mark as Printed</strong> button. The customer's phone immediately unlocks the <strong>UPI QR</strong> and <strong>Cash</strong> payment options.</p>
             </div>
           </div>
         </div>
@@ -958,11 +973,11 @@
       <p id="delete-confirm-msg" class="text-xs text-slate-500 mt-1 mb-5">This will permanently remove this order from the list.</p>
       <div class="flex items-center justify-end gap-2.5">
         <button id="btn-cancel-delete" type="button"
-          class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">
+          class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">
           Cancel
         </button>
         <button id="btn-confirm-delete" type="button"
-          class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-bold transition">
+          class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-bold transition">
           Delete
         </button>
       </div>
@@ -999,8 +1014,11 @@
       appId: "1:571284098159:web:ce29d0e68f49c36027919a"
     };
 
+    const APP_ID = "suhaeb-smart-print";
     const MAX_BATCH_FILES = 100;
     const MAX_BATCH_CLOUD_BYTES = 850 * 1024; // Safe under Firestore 1MB limit
+    const LOCAL_STORAGE_ORDERS_KEY = "suhaeb_smart_print_orders_v1";
+    const LOCAL_STORAGE_CONFIG_KEY = "suhaeb_smart_print_config_v1";
 
     let db = null;
     let auth = null;
@@ -1009,10 +1027,10 @@
 
     // Default 4 Printer Slots — ALL start Offline (online: false) so there is NEVER a ghost online printer
     const DEFAULT_PRINTERS = [
-      { id: 1, name: "Epson L3250", online: false, bridgeUrl: "", mode: "offline" },
-      { id: 2, name: "Printer Slot 2", online: false, bridgeUrl: "", mode: "offline" },
-      { id: 3, name: "Printer Slot 3", online: false, bridgeUrl: "", mode: "offline" },
-      { id: 4, name: "Printer Slot 4", online: false, bridgeUrl: "", mode: "offline" }
+      { id: 1, name: "Epson L3250", online: false, bridgeUrl: "" },
+      { id: 2, name: "Printer Slot 2", online: false, bridgeUrl: "" },
+      { id: 3, name: "Printer Slot 3", online: false, bridgeUrl: "" },
+      { id: 4, name: "Printer Slot 4", online: false, bridgeUrl: "" }
     ];
 
     let config = {
@@ -1039,7 +1057,6 @@
     let previewSelectedFileIndex = 0;
 
     // Customer Multi-File Batch State (Up to 100 files = 1 single customer order)
-    // Each item: { id, name, type, sizeKB, pages, dataUrl, localBlobUrl }
     let batchFiles = [];
     const localBlobUrlsByOrderId = new Map();
     let customerCopies = 1;
@@ -1106,8 +1123,7 @@
               id: slotId,
               name: found.name || (slotId === 1 ? "Epson L3250" : `Printer Slot ${slotId}`),
               online: Boolean(found.online),
-              bridgeUrl: found.bridgeUrl || "",
-              mode: found.mode || (found.online ? "counter" : "offline")
+              bridgeUrl: found.bridgeUrl || ""
             }
           : { ...DEFAULT_PRINTERS[slotId - 1] };
       });
@@ -1115,6 +1131,38 @@
 
     function getActiveJobOnSlot(slotId) {
       return allOrders.find((o) => o.status === "printing" && Number(o.assignedSlotId) === Number(slotId));
+    }
+
+    function saveLocalState() {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_CONFIG_KEY, JSON.stringify(config));
+        // Strip heavy base64 strings if localStorage quota is tight
+        const lightOrders = allOrders.map((o) => ({
+          ...o,
+          files: Array.isArray(o.files)
+            ? o.files.map((f) => ({ ...f, dataUrl: null }))
+            : []
+        }));
+        localStorage.setItem(LOCAL_STORAGE_ORDERS_KEY, JSON.stringify(lightOrders));
+      } catch (err) {
+        console.warn("LocalStorage save skipped:", err);
+      }
+    }
+
+    function loadLocalState() {
+      try {
+        const savedCfg = localStorage.getItem(LOCAL_STORAGE_CONFIG_KEY);
+        if (savedCfg) {
+          const parsed = JSON.parse(savedCfg);
+          config = { ...config, ...parsed, printers: normalizePrinters(parsed.printers) };
+        }
+        const savedOrders = localStorage.getItem(LOCAL_STORAGE_ORDERS_KEY);
+        if (savedOrders) {
+          allOrders = JSON.parse(savedOrders);
+        }
+      } catch (err) {
+        console.warn("LocalStorage load skipped:", err);
+      }
     }
 
     function playChime(kind = "order") {
@@ -1197,8 +1245,9 @@
         setCloudStatus("connected");
         attachFirestoreListeners();
       } catch (err) {
-        console.error("Firebase init failed:", err);
+        console.error("Firebase init failed, using localStorage fallback:", err);
         isOfflineMode = true;
+        loadLocalState();
         setCloudStatus("offline");
         applyConfigToUI();
         renderCustomerStatusStrip();
@@ -1206,18 +1255,21 @@
       }
     }
 
+    // Exact requested Firestore paths:
+    // artifacts/suhaeb-smart-print/public/data/settings/config
+    // artifacts/suhaeb-smart-print/public/data/jobs
     function configDocRef() {
-      return doc(db, "shop_config", "main");
+      return doc(db, "artifacts", APP_ID, "public", "data", "settings", "config");
     }
     function ordersColRef() {
-      return collection(db, "print_jobs");
+      return collection(db, "artifacts", APP_ID, "public", "data", "jobs");
     }
     function orderDocRef(id) {
-      return doc(db, "print_jobs", id);
+      return doc(db, "artifacts", APP_ID, "public", "data", "jobs", id);
     }
 
     function attachFirestoreListeners() {
-      // 1. Live Shop Config Listener
+      // 1. Live Shop Settings Listener
       onSnapshot(
         configDocRef(),
         (snap) => {
@@ -1231,6 +1283,7 @@
           } else {
             setDoc(configDocRef(), config).catch((e) => console.error("Seed config error:", e));
           }
+          saveLocalState();
           applyConfigToUI();
           renderCustomerStatusStrip();
           renderAdminDashboard();
@@ -1281,6 +1334,7 @@
           initialSnapshotProcessed = true;
 
           allOrders = list;
+          saveLocalState();
           renderCustomerStatusStrip();
           renderAdminDashboard();
           if (!$("modal-unpaid-alert").classList.contains("hidden")) {
@@ -1295,13 +1349,14 @@
       );
     }
 
-    // ==================== FIRESTORE MUTATIONS ====================
+    // ==================== FIRESTORE & FALLBACK MUTATIONS ====================
     async function saveConfig(partial) {
       config = {
         ...config,
         ...partial,
         printers: partial.printers ? normalizePrinters(partial.printers) : config.printers
       };
+      saveLocalState();
       applyConfigToUI();
       renderCustomerStatusStrip();
       renderAdminDashboard();
@@ -1313,6 +1368,7 @@
       if (isOfflineMode || !db || !currentUser) {
         const id = "local_" + Date.now();
         allOrders.unshift({ id, ...payload });
+        saveLocalState();
         renderCustomerStatusStrip();
         renderAdminDashboard();
         syncCustomerActiveOrderView();
@@ -1327,6 +1383,7 @@
         const idx = allOrders.findIndex((o) => o.id === id);
         if (idx !== -1) {
           allOrders[idx] = { ...allOrders[idx], ...updates };
+          saveLocalState();
           renderCustomerStatusStrip();
           renderAdminDashboard();
           if (!$("modal-unpaid-alert").classList.contains("hidden")) {
@@ -1342,6 +1399,7 @@
     async function deleteOrder(id) {
       if (isOfflineMode || !db || !currentUser) {
         allOrders = allOrders.filter((o) => o.id !== id);
+        saveLocalState();
         renderCustomerStatusStrip();
         renderAdminDashboard();
         if (!$("modal-unpaid-alert").classList.contains("hidden")) {
@@ -1385,7 +1443,7 @@
         strip.className = "mb-5 rounded-2xl border border-slate-200 bg-white px-4 py-3 flex items-center justify-between gap-3 shadow-sm";
         dot.className = "w-2.5 h-2.5 rounded-full bg-slate-400 shrink-0";
         text.className = "text-xs sm:text-sm font-bold text-slate-700 truncate";
-        text.textContent = "Counter Desk Standby • Phone Print Mode";
+        text.textContent = "Counter Desk Standby • Manual Queue Mode";
         badge.className = "text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0";
         badge.textContent = "STANDBY";
       }
@@ -1514,25 +1572,29 @@
       listEl.innerHTML = unpaid
         .map(
           (o) => `
-          <div class="bg-white rounded-xl border border-rose-200 p-3.5 flex items-center justify-between gap-3 shadow-sm">
-            <div class="min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded-md bg-rose-600 text-white text-xs font-extrabold">#${o.dailyNumber || 1}</span>
-                <p class="text-sm font-bold text-slate-900 truncate">${escapeHtml(o.customerName)}</p>
+          <div class="bg-white rounded-xl border border-rose-200 p-3.5 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-600 text-white text-xs font-extrabold">#${o.dailyNumber || 1}</span>
+                  <p class="text-sm font-extrabold text-slate-900 truncate">${escapeHtml(o.customerName)}</p>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">
+                  ${o.fileCount || 1} file(s) • ${o.totalPages || 1} pg × ${o.copies || 1} • ${formatDateShort(o.createdAt)} ${formatTime(o.createdAt)}
+                </p>
               </div>
-              <p class="text-xs text-slate-500 mt-1">
-                ${o.fileCount || 1} file(s) • ${o.totalPages || 1} pg × ${o.copies || 1} • ${formatDateShort(o.createdAt)} ${formatTime(o.createdAt)}
-              </p>
+              <span class="text-base font-extrabold text-rose-700 shrink-0">${formatCurrency(o.totalAmount)}</span>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <span class="text-sm font-extrabold text-rose-700 mr-1">${formatCurrency(o.totalAmount)}</span>
+            <div class="grid grid-cols-2 gap-2">
               <button type="button" data-unpaid-paid="${o.id}"
-                class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
-                Mark Paid
+                class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Mark Paid</span>
               </button>
-              <button type="button" data-unpaid-del="${o.id}" title="Delete Unpaid Record"
-                class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
+              <button type="button" data-unpaid-del="${o.id}"
+                class="py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
+                <span>Delete</span>
               </button>
             </div>
           </div>
@@ -1607,7 +1669,7 @@
       updateBatchPriceCalculator();
     });
 
-    function compressImageCanvas(file, maxWidth = 1200, quality = 0.72) {
+    function compressImageCanvas(file, maxWidth = 1100, quality = 0.7) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onerror = reject;
@@ -1686,10 +1748,9 @@
         renderBatchFilesList();
         updateBatchPriceCalculator();
 
-        // Process page count & compressed/inline preview asynchronously
         if (isImage) {
           try {
-            item.dataUrl = await compressImageCanvas(file, 1200, 0.72);
+            item.dataUrl = await compressImageCanvas(file, 1100, 0.7);
           } catch (err) {
             console.warn("Image compression fallback:", err);
           }
@@ -1863,7 +1924,7 @@
     function updateBatchPriceCalculator() {
       const fileCount = batchFiles.length;
       const totalPages = getTotalBatchPages();
-      const rate = customerColorMode === "color" ? Number(settingsRate("color")) : Number(settingsRate("bw"));
+      const rate = customerColorMode === "color" ? Number(config.colorRate) : Number(config.bwRate);
       const total = totalPages * customerCopies * rate;
 
       $("calc-formula").textContent = `${fileCount} file${fileCount === 1 ? "" : "s"} • ${totalPages} pg × ${customerCopies} × ${formatCurrency(rate)} = ${formatCurrency(total)}`;
@@ -1871,10 +1932,6 @@
 
       const hasName = $("input-customer-name").value.trim().length > 0;
       $("btn-submit-order").disabled = fileCount === 0 || !hasName;
-    }
-
-    function settingsRate(kind) {
-      return kind === "color" ? config.colorRate : config.bwRate;
     }
 
     // ==================== SUBMIT SINGLE CUSTOMER ORDER FOR ENTIRE BATCH ====================
@@ -1898,7 +1955,7 @@
       lucide.createIcons({ nodes: [btn] });
 
       try {
-        // Safely pack inline dataUrls within Firestore's <850KB payload guardrail
+        // Safely pack inline previews within Firestore's <850KB payload guardrail
         let usedCloudBytes = 0;
         const serializedFiles = batchFiles.map((f) => {
           let safeDataUrl = null;
@@ -1935,7 +1992,7 @@
           colorMode: customerColorMode,
           ratePerPage: rate,
           totalAmount,
-          status: "waiting", // waiting -> printing -> printed (ONLY when Admin taps Mark Printed)
+          status: "waiting", // waiting -> printing -> printed (ONLY when Admin taps Mark as Printed)
           assignedSlotId: null,
           assignedSlotName: "",
           paymentStatus: "unpaid", // unpaid -> paid
@@ -1951,7 +2008,6 @@
         renderedQrForOrderId = null;
         selectedCustomerPayTab = "upi";
 
-        // Retain local blob URLs on this device for instant preview
         localBlobUrlsByOrderId.set(
           orderId,
           batchFiles.map((f) => f.localBlobUrl || null)
@@ -2063,15 +2119,15 @@
         const position = ordersAhead + 1;
 
         $("waiting-queue-card").classList.toggle("hidden", ordersAhead === 0);
-        $("waiting-position-text").textContent = `Queue Position: #${position}`;
+        $("waiting-position-text").textContent = `Position #${position} in queue`;
         $("waiting-ahead-text").textContent = `${ordersAhead} customer order${ordersAhead > 1 ? "s" : ""} ahead of you`;
 
-        $("tracker-title").textContent = ordersAhead > 0 ? "Waiting in Queue" : "Next at Counter";
+        $("tracker-title").textContent = ordersAhead > 0 ? "Waiting in Queue" : "Position #1 in Queue";
         $("tracker-subtitle").textContent =
           ordersAhead > 0
-            ? "Someone is currently printing — please wait for your turn."
-            : "Your batch is ready at the counter. Payment opens once printed.";
-        $("step-2-sub").textContent = `Queue Position #${position}`;
+            ? "Someone ahead is printing — please wait for your turn."
+            : "Your batch is next at the counter. Payment opens once printed.";
+        $("step-2-sub").textContent = `Position #${position} in queue`;
         $("step-3-sub").textContent = "Waiting for counter print";
 
         setStepperState($("step-2"), "active");
@@ -2083,7 +2139,7 @@
         $("tracker-title").textContent = `Printing on ${slotLabel}`;
         $("tracker-subtitle").textContent = `Printing your ${order.fileCount || 1} file(s) (${(order.totalPages || 1) * (order.copies || 1)} sheets total).`;
         $("step-2-sub").textContent = "Turn reached";
-        $("step-3-sub").textContent = `Active on ${slotLabel}`;
+        $("step-3-sub").textContent = `Printing on ${slotLabel}`;
 
         setStepperState($("step-2"), "done");
         setStepperState($("step-3"), "active");
@@ -2170,6 +2226,133 @@
       lucide.createIcons();
     });
 
+    // ==================== ADMIN: TOP WAITING CUSTOMERS QUICK-ACTION BOARD ====================
+    function renderTopWaitingCustomersBoard() {
+      // Customers who are Waiting / Queued (not yet printed) OR Printed & Unpaid
+      const actionable = allOrders
+        .filter(
+          (o) =>
+            o.status === "waiting" ||
+            o.status === "printing" ||
+            (o.status === "printed" && o.paymentStatus !== "paid")
+        )
+        .sort((a, b) => {
+          // Order chronologically by createdAt / daily token
+          return (a.createdAt || 0) - (b.createdAt || 0);
+        });
+
+      const countBadge = $("waiting-board-count");
+      const emptyBox = $("waiting-board-empty");
+      const listBox = $("waiting-board-list");
+
+      countBadge.textContent = `${actionable.length} Active`;
+
+      if (actionable.length === 0) {
+        emptyBox.classList.remove("hidden");
+        listBox.classList.add("hidden");
+        listBox.innerHTML = "";
+        return;
+      }
+
+      emptyBox.classList.add("hidden");
+      listBox.classList.remove("hidden");
+
+      listBox.innerHTML = actionable
+        .map((o) => {
+          const isUnprinted = o.status === "waiting" || o.status === "printing";
+          const isColor = o.colorMode === "color";
+          const totalSheets = (Number(o.totalPages) || 1) * (Number(o.copies) || 1);
+
+          const statusPill = isUnprinted
+            ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                WAITING TO PRINT
+              </span>`
+            : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800 border border-rose-300">
+                <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                PRINTED — UNPAID
+              </span>`;
+
+          const colorPill = isColor
+            ? `<span class="px-2.5 py-0.5 rounded-md text-xs font-extrabold bg-gradient-to-r from-rose-100 to-amber-100 text-rose-800 border border-rose-200">Colour</span>`
+            : `<span class="px-2.5 py-0.5 rounded-md text-xs font-extrabold bg-slate-200 text-slate-800">B&amp;W</span>`;
+
+          return `
+            <div class="rounded-2xl bg-white border-2 ${isUnprinted ? "border-amber-300" : "border-rose-300"} p-4 sm:p-5 shadow-sm space-y-4">
+              <!-- Top Row: Giant Token Badge + Customer Info + Amount -->
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3.5 min-w-0">
+                  <div class="w-14 h-14 rounded-2xl ${isUnprinted ? "bg-indigo-600" : "bg-rose-600"} text-white flex flex-col items-center justify-center shrink-0 shadow-md">
+                    <span class="text-[10px] font-bold uppercase tracking-wider opacity-80 leading-none">Token</span>
+                    <span class="text-xl font-black leading-tight">#${o.dailyNumber || 1}</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h4 class="text-base sm:text-lg font-extrabold text-slate-900 truncate">${escapeHtml(o.customerName)}</h4>
+                      ${colorPill}
+                    </div>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-600 mt-1">
+                      ${o.fileCount || 1} file${(o.fileCount || 1) > 1 ? "s" : ""} • ${o.totalPages || 1} pg × ${o.copies || 1} ${o.copies > 1 ? "copies" : "copy"} (${totalSheets} sheets)
+                    </p>
+                    <div class="mt-2 flex flex-wrap items-center gap-2">
+                      ${statusPill}
+                      <span class="text-[11px] text-slate-400 font-medium">${formatTime(o.createdAt)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-right shrink-0">
+                  <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Total</span>
+                  <span class="text-xl sm:text-2xl font-black text-slate-900">${formatCurrency(o.totalAmount)}</span>
+                </div>
+              </div>
+
+              <!-- Large Touch-Friendly Counter Action Buttons -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-2 border-t border-slate-100">
+                <button type="button" data-action="preview" data-id="${o.id}"
+                  class="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white text-base font-bold shadow-sm flex items-center justify-center gap-2 transition">
+                  <i data-lucide="file-search" class="w-5 h-5"></i>
+                  <span>Preview / Open File</span>
+                </button>
+
+                ${
+                  isUnprinted
+                    ? `<button type="button" data-action="mark-printed" data-id="${o.id}"
+                        class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-[0.99] text-white text-base font-bold shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition">
+                        <i data-lucide="printer-check" class="w-5 h-5"></i>
+                        <span>Mark as Printed</span>
+                      </button>`
+                    : ""
+                }
+
+                <button type="button" data-action="mark-paid" data-id="${o.id}"
+                  class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white text-base font-bold shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition">
+                  <i data-lucide="badge-check" class="w-5 h-5"></i>
+                  <span>Mark Paid</span>
+                </button>
+
+                <button type="button" data-action="delete" data-id="${o.id}"
+                  class="w-full py-3.5 px-4 rounded-xl border-2 border-rose-200 bg-rose-50/70 hover:bg-rose-100 active:scale-[0.99] text-rose-700 text-base font-bold flex items-center justify-center gap-2 transition">
+                  <i data-lucide="trash-2" class="w-5 h-5"></i>
+                  <span>Delete</span>
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      lucide.createIcons({ nodes: [listBox] });
+    }
+
+    // Delegate large button clicks on the Top Waiting Customers Board
+    $("waiting-board-list").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (btn) {
+        handleOrderCardAction(btn.dataset.action, btn.dataset.id);
+      }
+    });
+
     // ==================== ADMIN: 4 PRINTER SLOTS (NO GHOST ONLINE) ====================
     function renderPrinterSlotsGrid() {
       const grid = $("printer-slots-grid");
@@ -2184,7 +2367,7 @@
           const statusBadge = activeOrder
             ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-extrabold animate-pulse">Printing #${activeOrder.dailyNumber || 1}</span>`
             : slot.online
-              ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">Active Desk</span>`
+              ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">Active Slot</span>`
               : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-extrabold">Offline</span>`;
 
           const cardBorder = activeOrder
@@ -2196,7 +2379,7 @@
           return `
             <div class="rounded-2xl border ${cardBorder} p-3.5 space-y-2.5 transition" data-slot-card="${slot.id}">
               <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Slot ${slot.id}</span>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Manual Queue Slot ${slot.id}</span>
                 ${statusBadge}
               </div>
 
@@ -2222,16 +2405,6 @@
                   Save Slot
                 </button>
               </div>
-
-              ${
-                activeOrder
-                  ? `<button type="button" data-slot-finish="${activeOrder.id}"
-                      class="w-full py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5 transition">
-                      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-                      <span>Mark Printed #${activeOrder.dailyNumber || 1}</span>
-                    </button>`
-                  : ""
-              }
             </div>
           `;
         })
@@ -2248,7 +2421,7 @@
         await saveConfig({ printers: updated });
         showToast(
           `Slot ${slotId} Updated`,
-          updated[slotId - 1].online ? "Marked Active Desk." : "Marked Offline.",
+          updated[slotId - 1].online ? "Marked Active Slot." : "Marked Offline.",
           "info"
         );
         return;
@@ -2263,21 +2436,11 @@
         const updated = config.printers.map((p) => (p.id === slotId ? { ...p, name, bridgeUrl } : p));
         await saveConfig({ printers: updated });
         showToast(`Slot ${slotId} Saved`, `${name} updated.`, "success");
-        return;
-      }
-
-      const finishBtn = e.target.closest("button[data-slot-finish]");
-      if (finishBtn) {
-        const orderId = finishBtn.dataset.slotFinish;
-        await updateOrder(orderId, { status: "printed", printedAt: Date.now() });
-        showToast("Confirmed Printed", "Customer screen now shows UPI QR & Cash options.", "success");
       }
     });
 
-    // ==================== ADMIN DASHBOARD: APPROVAL BANNERS, KPIs & LIST ====================
+    // ==================== ADMIN DASHBOARD: APPROVAL BANNERS, KPIs & HISTORY ====================
     function renderAdminDashboard() {
-      renderPrinterSlotsGrid();
-
       // 1. Live Cash / UPI "Payment done? Yes / No" Approval Banners
       const pendingApprovals = allOrders.filter(
         (o) => o.approvalStatus === "pending" && o.paymentStatus !== "paid"
@@ -2309,12 +2472,12 @@
 
               <div class="flex items-center gap-2.5 shrink-0">
                 <button type="button" data-approve-yes="${o.id}"
-                  class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-extrabold shadow-sm flex items-center justify-center gap-1.5 transition">
+                  class="flex-1 sm:flex-none px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold shadow-sm flex items-center justify-center gap-1.5 transition">
                   <i data-lucide="check" class="w-4 h-4"></i>
                   <span>Yes, Paid</span>
                 </button>
                 <button type="button" data-approve-no="${o.id}"
-                  class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-extrabold shadow-sm flex items-center justify-center gap-1.5 transition">
+                  class="flex-1 sm:flex-none px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-extrabold shadow-sm flex items-center justify-center gap-1.5 transition">
                   <i data-lucide="x" class="w-4 h-4"></i>
                   <span>No</span>
                 </button>
@@ -2326,7 +2489,13 @@
 
       lucide.createIcons({ nodes: [approvalStack] });
 
-      // 2. KPI Metrics
+      // 2. Top Priority Waiting Customers Board
+      renderTopWaitingCustomersBoard();
+
+      // 3. 4 Printer Slots
+      renderPrinterSlotsGrid();
+
+      // 4. KPI Metrics
       const todayKey = getTodayDateKey();
       const todayOrders = allOrders.filter((o) => (o.dateKey || getTodayDateKey(o.createdAt)) === todayKey);
 
@@ -2342,11 +2511,11 @@
 
       $("kpi-revenue").textContent = formatCurrency(todayRevenue);
       $("kpi-today-count").textContent = String(todayOrders.length);
-      $("kpi-active-sub").textContent = `${waitingCount} active in queue`;
+      $("kpi-active-sub").textContent = `${waitingCount} waiting to print`;
       $("kpi-unpaid").textContent = String(unpaidList.length);
       $("kpi-pages").textContent = String(pagesToday);
 
-      // 3. Filter Customer Orders List
+      // 5. Filter Customer Orders History List
       let filtered = [];
       if (activeFilter === "today") {
         filtered = [...todayOrders].sort((a, b) => (a.dailyNumber || 0) - (b.dailyNumber || 0));
@@ -2381,7 +2550,7 @@
 
           const statusBadges = {
             waiting: `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Waiting</span>`,
-            printing: `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-ping"></span>Printing (${escapeHtml(o.assignedSlotName || "Slot")})</span>`,
+            printing: `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-ping"></span>Printing</span>`,
             printed: `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i data-lucide="check" class="w-3.5 h-3.5"></i>Printed</span>`
           };
 
@@ -2436,25 +2605,16 @@
 
                 <div class="flex flex-wrap items-center gap-1.5">
                   <button data-action="preview" data-id="${o.id}"
-                    class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition">
+                    class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                    <span>Preview &amp; Print</span>
+                    <span>Preview / Print</span>
                   </button>
-
-                  ${
-                    o.status === "waiting"
-                      ? `<button data-action="start-printing" data-id="${o.id}"
-                          class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition">
-                          Start Print
-                        </button>`
-                      : ""
-                  }
 
                   ${
                     o.status !== "printed"
                       ? `<button data-action="mark-printed" data-id="${o.id}"
-                          class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">
-                          Mark Printed
+                          class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">
+                          Mark as Printed
                         </button>`
                       : ""
                   }
@@ -2462,14 +2622,14 @@
                   ${
                     o.paymentStatus !== "paid"
                       ? `<button data-action="mark-paid" data-id="${o.id}"
-                          class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
+                          class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
                           Mark Paid
                         </button>`
                       : ""
                   }
 
                   <button data-action="delete" data-id="${o.id}" title="Delete Customer Order"
-                    class="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-400 transition">
+                    class="p-2 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-400 transition">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -2480,6 +2640,31 @@
         .join("");
 
       lucide.createIcons({ nodes: [listEl] });
+    }
+
+    // Shared Handler for both Top Waiting Board and History List
+    async function handleOrderCardAction(action, id) {
+      const order = allOrders.find((o) => o.id === id);
+      if (!order) return;
+
+      if (action === "preview") {
+        openBatchPreviewModal(order);
+      } else if (action === "mark-printed") {
+        await updateOrder(id, { status: "printed", printedAt: Date.now() });
+        showToast("Marked as Printed", `#${order.dailyNumber} — UPI QR & Cash screen opened on customer's phone.`, "success");
+      } else if (action === "mark-paid") {
+        await updateOrder(id, {
+          paymentStatus: "paid",
+          approvalStatus: "approved",
+          paymentMethod: order.paymentMethod || "cash",
+          paidAt: Date.now()
+        });
+        showToast("Marked Paid", `Received ${formatCurrency(order.totalAmount)} from ${order.customerName}.`, "success");
+      } else if (action === "delete") {
+        pendingDeleteId = id;
+        $("delete-confirm-msg").textContent = `Permanently delete #${order.dailyNumber} — ${order.customerName} (${formatCurrency(order.totalAmount)})?`;
+        $("modal-delete").classList.remove("hidden");
+      }
     }
 
     // Live Cash / UPI Yes / No Banner Event Delegation
@@ -2531,39 +2716,10 @@
 
     $("kpi-unpaid-card").addEventListener("click", () => setActiveFilterTab("unpaid"));
 
-    // Queue Card Actions
-    $("admin-queue-list").addEventListener("click", async (e) => {
+    $("admin-queue-list").addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-action]");
-      if (!btn) return;
-      const { action, id } = btn.dataset;
-      const order = allOrders.find((o) => o.id === id);
-      if (!order) return;
-
-      if (action === "preview") {
-        openBatchPreviewModal(order);
-      } else if (action === "start-printing") {
-        const idleSlot = config.printers.find((p) => p.online && !getActiveJobOnSlot(p.id)) || config.printers[0];
-        await updateOrder(id, {
-          status: "printing",
-          assignedSlotId: idleSlot.id,
-          assignedSlotName: idleSlot.name
-        });
-        showToast("Printing Started", `#${order.dailyNumber} (${order.customerName}) assigned to ${idleSlot.name}.`, "info");
-      } else if (action === "mark-printed") {
-        await updateOrder(id, { status: "printed", printedAt: Date.now() });
-        showToast("Confirmed Printed", `#${order.dailyNumber} — UPI QR & Cash screen opened on customer's phone.`, "success");
-      } else if (action === "mark-paid") {
-        await updateOrder(id, {
-          paymentStatus: "paid",
-          approvalStatus: "approved",
-          paymentMethod: order.paymentMethod || "cash",
-          paidAt: Date.now()
-        });
-        showToast("Marked Paid", `Received ${formatCurrency(order.totalAmount)} from ${order.customerName}.`, "success");
-      } else if (action === "delete") {
-        pendingDeleteId = id;
-        $("delete-confirm-msg").textContent = `Permanently delete #${order.dailyNumber} — ${order.customerName} (${formatCurrency(order.totalAmount)})?`;
-        $("modal-delete").classList.remove("hidden");
+      if (btn) {
+        handleOrderCardAction(btn.dataset.action, btn.dataset.id);
       }
     });
 
@@ -2758,7 +2914,7 @@
       const num = previewingOrder.dailyNumber || 1;
       closePreviewModal();
       await updateOrder(id, { status: "printed", printedAt: Date.now() });
-      showToast("Marked Printed", `Order #${num} — Customer can now pay via UPI or Cash.`, "success");
+      showToast("Marked as Printed", `Order #${num} — Customer can now pay via UPI or Cash.`, "success");
     });
 
     async function printBatchFiles(order, indices) {
